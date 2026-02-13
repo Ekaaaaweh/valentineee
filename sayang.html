@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special for You | Valentine 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ff85a1;
+            --bg: #fff0f3;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--bg);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Container Utama */
+        #card {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.15);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+
+        .envelope {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        h2 { color: var(--primary); margin-bottom: 10px; }
+        p { color: #555; line-height: 1.5; }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+            position: relative;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        #yesBtn {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+        }
+
+        #noBtn {
+            background: #eee;
+            color: #666;
+            position: relative;
+        }
+
+        /* Animasi */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hidden { display: none !important; }
+
+        /* Floating Hearts Background */
+        .bg-heart {
+            position: absolute;
+            color: var(--secondary);
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="card">
+        <div id="step1">
+            <span class="envelope">💌</span>
+            <h2>Hai Kamu...</h2>
+            <p>Aku punya pertanyaan penting di hari kasih sayang ini.</p>
+            <button class="btn" id="nextBtn" onclick="nextStep()" style="background: var(--primary); color: white;">Buka Pesan</button>
+        </div>
+
+        <div id="step2" class="hidden">
+            <span class="envelope">💝</span>
+            <h2>mau gak jadi orang tersayangku?</h2>
+            <p>Jangan dipikirkan terlalu lama ya!</p>
+            <div class="btn-group">
+                <button id="yesBtn" onclick="celebrate()">MAU! ❤️</button>
+                <button id="noBtn" onmouseover="moveButton()">Enggak</button>
+            </div>
+        </div>
+
+        <div id="final" class="hidden">
+            <span class="envelope">💖</span>
+            <h2 id="finalMsg">YAY! I Love You!</h2>
+            <p>Terima kasih sudah memilihku. Hari ini milik kita berdua.</p>
+            <p style="font-size: 0.8rem; margin-top: 20px; opacity: 0.7;">14 Februari 2026</p>
+        </div>
+    </div>
+
+    <script>
+        // Langkah-langkah transisi
+        function nextStep() {
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+        }
+
+        // Fitur Tombol "No" yang Menghindar
+        function moveButton() {
+            const noBtn = document.getElementById('noBtn');
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        }
+
+        // Efek Perayaan (Confetti)
+        function celebrate() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('final').classList.remove('hidden');
+            
+            // Konfetti Hati
+            var duration = 15 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+              return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+              var timeLeft = animationEnd - Date.now();
+
+              if (timeLeft <= 0) {
+                return clearInterval(interval);
+              }
+
+              var particleCount = 50 * (timeLeft / duration);
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        // Background Hearts
+        function createBgHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('bg-heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.top = Math.random() * 100 + 'vh';
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            document.body.appendChild(heart);
+        }
+
+      function celebrate() {
+    // --- KONFIGURASI DISCORD ---
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1463473630251061375/xi6CyaH0ElCz_jUz9vf_iFfOxfNuh1iZfX_31GAO7jOcxRjkhd723nbEFd3ZAp1YvhME";
+    
+    // Tampilan di Layar Dia
+    document.getElementById('step2').classList.add('hidden');
+    document.getElementById('final').classList.remove('hidden');
+    
+    // Efek Konfetti
+    confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#ff4d6d', '#ff85a1', '#ffffff']
+    });
+
+    // --- KIRIM NOTIFIKASI KE DISCORD (OTOMATIS) ---
+    const data = {
+        username: "Valentine Tracker 💖",
+        avatar_url: "https://cdn-icons-png.flaticon.com/512/833/833472.png",
+        embeds: [{
+            title: "CIEEEE! DIA BILANG MAU! 😍",
+            description: "Target baru saja menekan tombol **MAU!** di website Valentine kamu.",
+            color: 16731501, // Warna pink (Hex: ff4d6d)
+            fields: [
+                { name: "Status", value: "Accepted ❤️", inline: true },
+                { name: "Waktu", value: new Date().toLocaleString('id-ID'), inline: true }
+            ],
+            footer: { text: "Valentine 2026 - Mission Success" }
+        }]
+    };
+
+    fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(() => console.log("Notifikasi Discord Terkirim!"))
+    .catch(err => console.error("Gagal kirim notif:", err));
+}
+
+        // Membuat beberapa hati di latar belakang
+        for (let i = 0; i < 30; i++) {
+            createBgHeart();
+}
+    // Fungsi moveButton tetap sama seperti sebelumnya
+    function moveButton() {
+        const noBtn = document.getElementById('noBtn');
+        const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+        const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = x + 'px';
+        noBtn.style.top = y + 'px';
+    }
+
+    function nextStep() {
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.remove('hidden');
+    }
+</script>
+</body>
+</html>
