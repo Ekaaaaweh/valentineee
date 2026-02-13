@@ -24,7 +24,6 @@
             overflow: hidden;
         }
 
-        /* Container Utama */
         #card {
             background: white;
             padding: 30px;
@@ -77,7 +76,6 @@
             position: relative;
         }
 
-        /* Animasi */
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
@@ -85,7 +83,6 @@
 
         .hidden { display: none !important; }
 
-        /* Floating Hearts Background */
         .bg-heart {
             position: absolute;
             color: var(--secondary);
@@ -111,7 +108,7 @@
             <p>Jangan dipikirkan terlalu lama ya!</p>
             <div class="btn-group">
                 <button id="yesBtn" onclick="celebrate()">MAU! ❤️</button>
-                <button id="noBtn" onmouseover="moveButton()">Enggak</button>
+                <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">Enggak</button>
             </div>
         </div>
 
@@ -124,14 +121,15 @@
     </div>
 
     <script>
-        // Langkah-langkah transisi
         function nextStep() {
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
         }
 
-        // Fitur Tombol "No" yang Menghindar
         function moveButton() {
+            // NOTIFIKASI PAKSA
+            alert("Eits, gak bisa! HARUSS MAUU!! ❤️");
+
             const noBtn = document.getElementById('noBtn');
             const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
             const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
@@ -141,34 +139,43 @@
             noBtn.style.top = y + 'px';
         }
 
-        // Efek Perayaan (Confetti)
         function celebrate() {
+            const WEBHOOK_URL = "https://discord.com/api/webhooks/1463473630251061375/xi6CyaH0ElCz_jUz9vf_iFfOxfNuh1iZfX_31GAO7jOcxRjkhd723nbEFd3ZAp1YvhME";
+            
             document.getElementById('step2').classList.add('hidden');
             document.getElementById('final').classList.remove('hidden');
             
-            // Konfetti Hati
-            var duration = 15 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ff85a1', '#ffffff']
+            });
 
-            function randomInRange(min, max) {
-              return Math.random() * (max - min) + min;
-            }
+            const data = {
+                username: "Valentine Tracker 💖",
+                avatar_url: "https://cdn-icons-png.flaticon.com/512/833/833472.png",
+                embeds: [{
+                    title: "CIEEEE! DIA BILANG MAU! 😍",
+                    description: "Target baru saja menekan tombol **MAU!** di website Valentine kamu.",
+                    color: 16731501,
+                    fields: [
+                        { name: "Status", value: "Accepted ❤️", inline: true },
+                        { name: "Waktu", value: new Date().toLocaleString('id-ID'), inline: true }
+                    ],
+                    footer: { text: "Valentine 2026 - Mission Success" }
+                }]
+            };
 
-            var interval = setInterval(function() {
-              var timeLeft = animationEnd - Date.now();
-
-              if (timeLeft <= 0) {
-                return clearInterval(interval);
-              }
-
-              var particleCount = 50 * (timeLeft / duration);
-              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
+            fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(() => console.log("Notifikasi Discord Terkirim!"))
+            .catch(err => console.error("Gagal kirim notif:", err));
         }
 
-        // Background Hearts
         function createBgHeart() {
             const heart = document.createElement('div');
             heart.classList.add('bg-heart');
@@ -179,65 +186,9 @@
             document.body.appendChild(heart);
         }
 
-      function celebrate() {
-    // --- KONFIGURASI DISCORD ---
-    const WEBHOOK_URL = "https://discord.com/api/webhooks/1463473630251061375/xi6CyaH0ElCz_jUz9vf_iFfOxfNuh1iZfX_31GAO7jOcxRjkhd723nbEFd3ZAp1YvhME";
-    
-    // Tampilan di Layar Dia
-    document.getElementById('step2').classList.add('hidden');
-    document.getElementById('final').classList.remove('hidden');
-    
-    // Efek Konfetti
-    confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#ff4d6d', '#ff85a1', '#ffffff']
-    });
-
-    // --- KIRIM NOTIFIKASI KE DISCORD (OTOMATIS) ---
-    const data = {
-        username: "Valentine Tracker 💖",
-        avatar_url: "https://cdn-icons-png.flaticon.com/512/833/833472.png",
-        embeds: [{
-            title: "CIEEEE! DIA BILANG MAU! 😍",
-            description: "Target baru saja menekan tombol **MAU!** di website Valentine kamu.",
-            color: 16731501, // Warna pink (Hex: ff4d6d)
-            fields: [
-                { name: "Status", value: "Accepted ❤️", inline: true },
-                { name: "Waktu", value: new Date().toLocaleString('id-ID'), inline: true }
-            ],
-            footer: { text: "Valentine 2026 - Mission Success" }
-        }]
-    };
-
-    fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    })
-    .then(() => console.log("Notifikasi Discord Terkirim!"))
-    .catch(err => console.error("Gagal kirim notif:", err));
-}
-
-        // Membuat beberapa hati di latar belakang
         for (let i = 0; i < 30; i++) {
             createBgHeart();
-}
-    // Fungsi moveButton tetap sama seperti sebelumnya
-    function moveButton() {
-        const noBtn = document.getElementById('noBtn');
-        const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-        const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-        noBtn.style.position = 'fixed';
-        noBtn.style.left = x + 'px';
-        noBtn.style.top = y + 'px';
-    }
-
-    function nextStep() {
-        document.getElementById('step1').classList.add('hidden');
-        document.getElementById('step2').classList.remove('hidden');
-    }
-</script>
+        }
+    </script>
 </body>
 </html>
